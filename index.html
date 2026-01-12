@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BasketBet - O Jogo da Cesta</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- AR Video Background -->
+    <video id="ar-video" playsinline autoplay muted></video>
+    <div id="ar-scan-overlay">
+        <div class="scan-line"></div>
+        <div class="scan-text">Mapeando Ambiente...</div>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="app-header">
+        <div class="logo">
+            <i class="fa-solid fa-basketball"></i>
+            <span>BASKET<span class="highlight">BET</span></span>
+        </div>
+        <div class="user-controls">
+            <div class="balance-display">
+                <span>R$</span>
+                <span id="user-balance">1.000,00</span>
+            </div>
+            <button class="btn-deposit" data-modal="modal-deposit">DEPÓSITO</button>
+            <div class="profile-icon" data-modal="modal-profile">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Game Container -->
+    <main class="game-container">
+
+        <!-- Game Viewport -->
+        <div class="game-viewport">
+            <!-- History -->
+            <div class="score-board" id="score-board">
+                <!-- Scores injected here -->
+            </div>
+
+            <!-- Hoop Section -->
+            <div class="hoop-container">
+                <div class="backboard">
+                    <div class="backboard-inner">
+                        <img src="assets/xrcore_logo_final.png" class="backboard-logo" alt="XR CORE">
+                    </div>
+                    <div class="rim">
+                        <div class="net" id="hoop-net"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Court Section -->
+            <div class="court-perspective">
+                <div class="floor">
+                    <div class="key-area">
+                        <div class="free-throw-line"></div>
+                        <div class="paint"></div>
+                    </div>
+                    <div class="three-point-line"></div>
+                    <div class="center-circle"></div>
+                </div>
+
+                <!-- Ball -->
+                <div class="ball-container">
+                    <div class="aim-line"></div> <!-- Force Line -->
+                    <div class="ball" id="basketball"></div>
+                </div>
+            </div>
+
+            <!-- Side Gauge (Multiplier/Power) -->
+            <div class="side-gauge">
+                <div class="gauge-bar">
+                    <div class="gauge-fill"></div>
+                </div>
+                <!-- Moving Arrow -->
+                <div class="gauge-arrow" id="gauge-arrow">
+                    <i class="fa-solid fa-caret-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Controls -->
+        <div class="controls-area">
+
+            <div class="turbo-toggle">
+                <div class="turbo-btn" id="turbo-btn">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>TURBO</span>
+                </div>
+            </div>
+
+            <div class="bet-input-group">
+                <button class="btn-adjust" id="btn-minus"><i class="fa-solid fa-minus"></i></button>
+                <div class="bet-value">
+                    <span class="currency">R$</span>
+                    <input type="number" id="bet-amount" value="5.00" step="1.00">
+                </div>
+                <button class="btn-adjust" id="btn-plus"><i class="fa-solid fa-plus"></i></button>
+            </div>
+
+            <div class="actions-group">
+                <button class="btn-ar" id="btn-ar">
+                    <i class="fa-solid fa-camera"></i>
+                    <span>JOGAR EM RA</span>
+                </button>
+                <button class="btn-play" id="btn-play">
+                    JOGAR
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav (App feel) -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-action="play">
+            <i class="fa-solid fa-gamepad"></i>
+            <span>Jogar</span>
+        </button>
+        <button class="nav-item" data-modal="modal-withdraw">
+            <i class="fa-solid fa-money-bill-transfer"></i>
+            <span>Saque</span>
+        </button>
+        <button class="nav-item" data-modal="modal-history">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Histórico</span>
+        </button>
+        <button class="nav-item" data-modal="modal-menu">
+            <i class="fa-solid fa-bars"></i>
+            <span>Menu</span>
+        </button>
+    </nav>
+
+    <!-- Modals (Hidden by default) -->
+    <div class="modal-overlay hidden" id="modal-overlay">
+        <!-- Deposit Modal -->
+        <div class="modal-content hidden" id="modal-deposit">
+            <div class="modal-header">
+                <h2>Depósito</h2>
+                <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Valor para depositar via PIX:</p>
+
+                <div class="manual-value-input">
+                    <span>R$</span>
+                    <input type="number" id="deposit-amount-input" value="20.00" step="1.00" min="1.00">
+                </div>
+
+                <div class="pix-options">
+                    <button data-value="20">R$ 20</button>
+                    <button data-value="50">R$ 50</button>
+                    <button data-value="100">R$ 100</button>
+                    <button data-value="200">R$ 200</button>
+                    <button data-value="500">R$ 500</button>
+                    <button data-value="1000">R$ 1.000</button>
+                </div>
+                <button class="btn-action full" id="generate-pix-btn">Gerar QR Code PIX</button>
+            </div>
+        </div>
+
+        <!-- Withdraw Modal -->
+        <div class="modal-content hidden" id="modal-withdraw">
+            <div class="modal-header">
+                <h2>Saque</h2>
+                <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Valor disponível: <span class="highlight-text">R$ <span
+                            id="withdraw-balance-display">1.000,00</span></span></p>
+                <input type="text" placeholder="Chave PIX (CPF/Email)" class="input-field">
+                <input type="number" id="withdraw-amount" placeholder="Valor do saque" class="input-field">
+                <button class="btn-action full" id="confirm-withdraw-btn">Solicitar Saque</button>
+            </div>
+        </div>
+
+        <!-- History Modal -->
+        <div class="modal-content hidden" id="modal-history">
+            <div class="modal-header">
+                <h2>Histórico de Apostas</h2>
+                <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body scrollable">
+                <div class="history-item win">
+                    <span>Aposta: R$ 5.00</span>
+                    <span>Ganho: R$ 10.00</span>
+                </div>
+                <div class="history-item loss">
+                    <span>Aposta: R$ 5.00</span>
+                    <span>Perda</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Modal -->
+        <div class="modal-content hidden" id="modal-profile">
+            <div class="modal-header">
+                <h2>Meu Perfil</h2>
+                <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-info">
+                    <div class="avatar-large" id="avatar-trigger">
+                        <img src="https://via.placeholder.com/100" id="user-avatar-img" alt="Avatar">
+                        <div class="avatar-edit-hint"><i class="fa-solid fa-camera"></i></div>
+                        <input type="file" id="avatar-input" hidden accept="image/*">
+                    </div>
+                    <div id="profile-display-name">
+                        <h3>Usuário VIP</h3>
+                        <p>ID: #839201</p>
+                    </div>
+
+                    <div class="edit-mode-inputs" id="edit-profile-form">
+                        <input type="text" id="edit-name" class="input-field" placeholder="Novo Nome">
+                        <button class="btn-action full" id="save-profile-btn">Salvar Alterações</button>
+                    </div>
+                </div>
+                <!-- stats-grid ... -->
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <label>Apostas</label>
+                        <span id="stat-bets">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <label>Win Rate</label>
+                        <span id="stat-winrate">0%</span>
+                    </div>
+                </div>
+                <button class="btn-action outline full" id="edit-data-trigger">Editar Dados</button>
+                <button class="btn-action outline full danger">Sair</button>
+            </div>
+        </div>
+
+        <!-- Menu Modal -->
+        <div class="modal-content hidden" id="modal-menu">
+            <div class="modal-header">
+                <h2>Menu</h2>
+                <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <button class="menu-item"><i class="fa-solid fa-headset"></i> Suporte ao Vivo</button>
+                <button class="menu-item"><i class="fa-solid fa-percent"></i> Promoções</button>
+                <button class="menu-item"><i class="fa-solid fa-shield-halved"></i> Jogo Responsável</button>
+                <button class="menu-item"><i class="fa-solid fa-clipboard-list"></i> Termos e Condições</button>
+                <button class="menu-item logout-trigger"
+                    style="color: #ff4444; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; padding-top: 15px;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sair do Jogo
+                </button>
+                <br>
+                <p class="version">Versão 1.5.3</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

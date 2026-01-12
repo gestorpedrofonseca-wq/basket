@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BasketBet Admin - Painel de Controle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="header-left">
+            <i class="fa-solid fa-basketball"></i>
+            <h1>BasketBet Admin</h1>
+        </div>
+        <div class="header-right">
+            <div class="admin-info">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Administrador</span>
+            </div>
+            <button class="btn-logout" id="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Sair
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#rtp" class="nav-item" data-section="rtp">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Controle RTP</span>
+            </a>
+            <a href="#players" class="nav-item" data-section="players">
+                <i class="fa-solid fa-users"></i>
+                <span>Jogadores</span>
+            </a>
+            <a href="#leads" class="nav-item" data-section="leads">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Leads</span>
+            </a>
+            <a href="#transactions" class="nav-item" data-section="transactions">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+                <span>Transações</span>
+            </a>
+            <a href="#game-config" class="nav-item" data-section="game-config">
+                <i class="fa-solid fa-gear"></i>
+                <span>Configurações</span>
+            </a>
+            <a href="#analytics" class="nav-item" data-section="analytics">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Análises</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="admin-section active">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-chart-line"></i> Dashboard Geral</h2>
+                <div class="header-actions">
+                    <button class="btn-refresh" id="refresh-dashboard">
+                        <i class="fa-solid fa-rotate"></i> Atualizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon revenue">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Receita Total</span>
+                        <span class="kpi-value" id="total-revenue">R$ 0,00</span>
+                        <span class="kpi-change positive">+12.5%</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon players">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Jogadores Ativos</span>
+                        <span class="kpi-value" id="active-players">0</span>
+                        <span class="kpi-change positive">+8</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bets">
+                        <i class="fa-solid fa-basketball"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Total de Apostas</span>
+                        <span class="kpi-value" id="total-bets">0</span>
+                        <span class="kpi-change">Hoje</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon rtp">
+                        <i class="fa-solid fa-percent"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">RTP Atual</span>
+                        <span class="kpi-value" id="current-rtp">85%</span>
+                        <span class="kpi-change">Meta: 85%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <h3>Apostas por Hora</h3>
+                    <div class="chart-placeholder" id="bets-chart">
+                        <canvas id="betsCanvas"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>Receita vs Pagamentos</h3>
+                    <div class="chart-placeholder" id="revenue-chart">
+                        <canvas id="revenueCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-card">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> Atividade Recente</h3>
+                <div class="activity-list" id="recent-activity">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </section>
+
+        <!-- RTP Control Section -->
+        <section id="rtp" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-sliders"></i> Controle de RTP (Return to Player)</h2>
+            </div>
+
+            <div class="rtp-control-panel">
+                <div class="rtp-main-control">
+                    <div class="rtp-display">
+                        <span class="rtp-label">RTP Global</span>
+                        <span class="rtp-percentage" id="rtp-display">85%</span>
+                    </div>
+                    <div class="rtp-slider-container">
+                        <input type="range" id="rtp-slider" min="70" max="98" value="85" step="1">
+                        <div class="rtp-marks">
+                            <span>70%</span>
+                            <span>80%</span>
+                            <span>90%</span>
+                            <span>98%</span>
+                        </div>
+                    </div>
+                    <button class="btn-apply" id="apply-rtp">
+                        <i class="fa-solid fa-check"></i> Aplicar RTP
+                    </button>
+                </div>
+
+                <div class="rtp-zones">
+                    <h3>Zonas de Vitória</h3>
+                    <div class="zone-controls">
+                        <div class="zone-item">
+                            <label>Zona Perfeita (82-98)</label>
+                            <div class="zone-inputs">
+                                <input type="number" id="perfect-min" value="82" min="0" max="100">
+                                <span>até</span>
+                                <input type="number" id="perfect-max" value="98" min="0" max="100">
+                            </div>
+                            <div class="zone-multiplier">
+                                <label>Multiplicador:</label>
+                                <input type="number" id="perfect-mult-min" value="1.5" step="0.1" min="1" max="5">
+                                <span>-</span>
+                                <input type="number" id="perfect-mult-max" value="3.0" step="0.1" min="1" max="5">
+                            </div>
+                        </div>
+
+                        <div class="zone-item">
+                            <label>Zona Rim (75-82)</label>
+                            <div class="zone-inputs">
+                                <input type="number" id="rim-min" value="75" min="0" max="100">
+                                <span>até</span>
+                                <input type="number" id="rim-max" value="82" min="0" max="100">
+                            </div>
+                            <div class="zone-status">
+                                <span>Status: Perda (Rim Out)</span>
+                            </div>
+                        </div>
+
+                        <button class="btn-apply" id="apply-zones">
+                            <i class="fa-solid fa-save"></i> Salvar Zonas
+                        </button>
+                    </div>
+                </div>
+
+                <div class="rtp-stats">
+                    <h3>Estatísticas de RTP</h3>
+                    <div class="rtp-stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-label">RTP Efetivo (24h)</span>
+                            <span class="stat-value" id="effective-rtp">84.2%</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Total Apostado</span>
+                            <span class="stat-value" id="total-wagered">R$ 0,00</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Total Pago</span>
+                            <span class="stat-value" id="total-paid">R$ 0,00</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Lucro da Casa</span>
+                            <span class="stat-value profit" id="house-profit">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Players Section -->
+        <section id="players" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-users"></i> Gerenciamento de Jogadores</h2>
+                <div class="header-actions">
+                    <input type="search" placeholder="Buscar jogador..." class="search-input" id="search-players">
+                    <button class="btn-export">
+                        <i class="fa-solid fa-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Saldo</th>
+                            <th>Total Apostado</th>
+                            <th>Total Ganho</th>
+                            <th>Win Rate</th>
+                            <th>Última Atividade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="players-table-body">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Leads Section -->
+        <section id="leads" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-user-plus"></i> Leads e Cadastros</h2>
+                <div class="header-actions">
+                    <select class="filter-select">
+                        <option>Todos</option>
+                        <option>Hoje</option>
+                        <option>Esta Semana</option>
+                        <option>Este Mês</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Status</th>
+                            <th>Primeiro Depósito</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leads-table-body">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Transactions Section -->
+        <section id="transactions" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-money-bill-transfer"></i> Transações</h2>
+                <div class="header-actions">
+                    <select class="filter-select" id="transaction-filter">
+                        <option value="all">Todas</option>
+                        <option value="deposit">Depósitos</option>
+                        <option value="withdraw">Saques</option>
+                        <option value="bet">Apostas</option>
+                        <option value="win">Ganhos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Data/Hora</th>
+                            <th>Jogador</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-table-body">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Game Config Section -->
+        <section id="game-config" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-gear"></i> Configurações do Jogo</h2>
+            </div>
+
+            <div class="config-grid">
+                <div class="config-card">
+                    <h3>Limites de Aposta</h3>
+                    <div class="config-form">
+                        <div class="form-group">
+                            <label>Aposta Mínima (R$)</label>
+                            <input type="number" id="min-bet" value="5.00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Aposta Máxima (R$)</label>
+                            <input type="number" id="max-bet" value="1000.00" step="0.01">
+                        </div>
+                        <button class="btn-save">Salvar</button>
+                    </div>
+                </div>
+
+                <div class="config-card">
+                    <h3>Velocidade do Medidor</h3>
+                    <div class="config-form">
+                        <div class="form-group">
+                            <label>Velocidade Normal</label>
+                            <input type="number" id="gauge-speed-normal" value="1.5" step="0.1" min="0.5" max="5">
+                        </div>
+                        <div class="form-group">
+                            <label>Velocidade Turbo</label>
+                            <input type="number" id="gauge-speed-turbo" value="2.5" step="0.1" min="0.5" max="5">
+                        </div>
+                        <button class="btn-save">Salvar</button>
+                    </div>
+                </div>
+
+                <div class="config-card">
+                    <h3>Modo Manutenção</h3>
+                    <div class="config-form">
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" id="maintenance-mode">
+                                <span class="switch-slider"></span>
+                                Ativar Modo Manutenção
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Mensagem de Manutenção</label>
+                            <textarea id="maintenance-message"
+                                rows="3">Sistema em manutenção. Voltamos em breve!</textarea>
+                        </div>
+                        <button class="btn-save">Salvar</button>
+                    </div>
+                </div>
+
+                <div class="config-card">
+                    <h3>Saldo Inicial</h3>
+                    <div class="config-form">
+                        <div class="form-group">
+                            <label>Saldo de Boas-Vindas (R$)</label>
+                            <input type="number" id="welcome-balance" value="1000.00" step="0.01">
+                        </div>
+                        <button class="btn-save">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-chart-pie"></i> Análises Avançadas</h2>
+                <div class="header-actions">
+                    <select class="filter-select">
+                        <option>Últimas 24h</option>
+                        <option>Última Semana</option>
+                        <option>Último Mês</option>
+                        <option>Personalizado</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>Distribuição de Apostas</h3>
+                    <canvas id="betsDistributionChart"></canvas>
+                </div>
+                <div class="analytics-card">
+                    <h3>Taxa de Conversão</h3>
+                    <canvas id="conversionChart"></canvas>
+                </div>
+                <div class="analytics-card">
+                    <h3>Horários de Pico</h3>
+                    <canvas id="peakHoursChart"></canvas>
+                </div>
+                <div class="analytics-card">
+                    <h3>Retenção de Jogadores</h3>
+                    <canvas id="retentionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="admin-script.js"></script>
+</body>
+
+</html>
