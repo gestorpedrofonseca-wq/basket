@@ -7,6 +7,7 @@
     <title>BasketBet Admin - Painel de Controle</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="admin-premium.css">
 </head>
 
 <body>
@@ -32,32 +33,44 @@
     <aside class="admin-sidebar">
         <nav class="sidebar-nav">
             <a href="#dashboard" class="nav-item active" data-section="dashboard">
-                <i class="fa-solid fa-chart-line"></i>
+                <i class="fa-solid fa-house"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="#rtp" class="nav-item" data-section="rtp">
-                <i class="fa-solid fa-sliders"></i>
-                <span>Controle RTP</span>
+            <a href="#withdrawals" class="nav-item" data-section="withdrawals">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+                <span>Saques</span>
+            </a>
+            <a href="#deposits" class="nav-item" data-section="deposits">
+                <i class="fa-solid fa-piggy-bank"></i>
+                <span>Depósitos</span>
             </a>
             <a href="#players" class="nav-item" data-section="players">
                 <i class="fa-solid fa-users"></i>
                 <span>Jogadores</span>
             </a>
+            <a href="#analytics" class="nav-item" data-section="analytics">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Análises</span>
+            </a>
             <a href="#leads" class="nav-item" data-section="leads">
                 <i class="fa-solid fa-user-plus"></i>
                 <span>Leads</span>
             </a>
-            <a href="#transactions" class="nav-item" data-section="transactions">
-                <i class="fa-solid fa-money-bill-transfer"></i>
-                <span>Transações</span>
+            <a href="#gateway" class="nav-item" data-section="gateway">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>Gateway</span>
+            </a>
+            <a href="#webhooks" class="nav-item" data-section="webhooks">
+                <i class="fa-solid fa-webhook"></i>
+                <span>Webhooks</span>
+            </a>
+            <a href="#rtp" class="nav-item" data-section="rtp">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Controle RTP</span>
             </a>
             <a href="#game-config" class="nav-item" data-section="game-config">
-                <i class="fa-solid fa-gear"></i>
+                <i class="fa-solid fa-sliders"></i>
                 <span>Configurações</span>
-            </a>
-            <a href="#analytics" class="nav-item" data-section="analytics">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>Análises</span>
             </a>
         </nav>
     </aside>
@@ -91,34 +104,34 @@
 
                 <div class="kpi-card">
                     <div class="kpi-icon players">
-                        <i class="fa-solid fa-users"></i>
+                        <i class="fa-solid fa-address-card"></i>
                     </div>
                     <div class="kpi-content">
-                        <span class="kpi-label">Jogadores Ativos</span>
-                        <span class="kpi-value" id="active-players">0</span>
-                        <span class="kpi-change positive">+8</span>
+                        <span class="kpi-label">Cadastros</span>
+                        <span class="kpi-value" id="kpi-cadastros">0</span>
+                        <span class="kpi-change positive">Novos</span>
                     </div>
                 </div>
 
                 <div class="kpi-card">
                     <div class="kpi-icon bets">
-                        <i class="fa-solid fa-basketball"></i>
+                        <i class="fa-solid fa-users-gear"></i>
                     </div>
                     <div class="kpi-content">
-                        <span class="kpi-label">Total de Apostas</span>
-                        <span class="kpi-value" id="total-bets">0</span>
-                        <span class="kpi-change">Hoje</span>
+                        <span class="kpi-label">CPA ATIVO</span>
+                        <span class="kpi-value" id="kpi-cpa-ativo">0</span>
+                        <span class="kpi-change">Depositantes</span>
                     </div>
                 </div>
 
                 <div class="kpi-card">
                     <div class="kpi-icon rtp">
-                        <i class="fa-solid fa-percent"></i>
+                        <i class="fa-solid fa-money-bill-trend-up"></i>
                     </div>
                     <div class="kpi-content">
-                        <span class="kpi-label">RTP Atual</span>
-                        <span class="kpi-value" id="current-rtp">85%</span>
-                        <span class="kpi-change">Meta: 85%</span>
+                        <span class="kpi-label">Ticket Médio</span>
+                        <span class="kpi-value" id="kpi-ticket-medio">R$ 0,00</span>
+                        <span class="kpi-change">Média Dep.</span>
                     </div>
                 </div>
             </div>
@@ -148,88 +161,343 @@
             </div>
         </section>
 
-        <!-- RTP Control Section -->
-        <section id="rtp" class="admin-section">
+        <!-- Withdrawals Section (NOVA) -->
+        <section id="withdrawals" class="admin-section">
             <div class="section-header">
-                <h2><i class="fa-solid fa-sliders"></i> Controle de RTP (Return to Player)</h2>
+                <h2><i class="fa-solid fa-hand-holding-dollar"></i> Gestão de Saques</h2>
+                <div class="header-actions">
+                    <div class="stats-mini">
+                        <span class="mini-label">Pendentes:</span>
+                        <span class="mini-value pending" id="pending-withdrawals-count">0</span>
+                    </div>
+                    <div class="stats-mini">
+                        <span class="mini-label">Total Hoje:</span>
+                        <span class="mini-value" id="today-withdrawals-total">R$ 0,00</span>
+                    </div>
+                    <button class="btn-refresh" onclick="location.reload()">
+                        <i class="fa-solid fa-rotate"></i> Atualizar
+                    </button>
+                </div>
             </div>
 
-            <div class="rtp-control-panel">
-                <div class="rtp-main-control">
-                    <div class="rtp-display">
-                        <span class="rtp-label">RTP Global</span>
-                        <span class="rtp-percentage" id="rtp-display">85%</span>
+            <!-- Filtros -->
+            <div class="filters-bar">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fa-solid fa-list"></i> Todos
+                </button>
+                <button class="filter-btn" data-filter="pending">
+                    <i class="fa-solid fa-clock"></i> Pendentes
+                </button>
+                <button class="filter-btn" data-filter="approved">
+                    <i class="fa-solid fa-check-circle"></i> Aprovados
+                </button>
+                <button class="filter-btn" data-filter="rejected">
+                    <i class="fa-solid fa-times-circle"></i> Rejeitados
+                </button>
+            </div>
+
+            <!-- Tabela de Saques -->
+            <div class="table-container premium">
+                <table class="admin-table modern">
+                    <thead>
+                        <tr>
+                            <th><i class="fa-solid fa-hashtag"></i> ID</th>
+                            <th><i class="fa-solid fa-calendar"></i> Data/Hora</th>
+                            <th><i class="fa-solid fa-user"></i> Jogador</th>
+                            <th><i class="fa-solid fa-key"></i> Chave PIX</th>
+                            <th><i class="fa-solid fa-money-bill-wave"></i> Valor</th>
+                            <th><i class="fa-solid fa-signal"></i> Status</th>
+                            <th><i class="fa-solid fa-gears"></i> Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="withdrawals-table-body">
+                        <tr class="empty-state">
+                            <td colspan="7">
+                                <div class="empty-illustration">
+                                    <i class="fa-solid fa-inbox"></i>
+                                    <p>Nenhuma solicitação de saque encontrada</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Deposits Section (NOVA) -->
+        <section id="deposits" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-piggy-bank"></i> Histórico de Depósitos</h2>
+                <div class="header-actions">
+                    <div class="stats-mini success">
+                        <span class="mini-label">Total Depositado:</span>
+                        <span class="mini-value" id="total-deposits-amount">R$ 0,00</span>
                     </div>
-                    <div class="rtp-slider-container">
-                        <input type="range" id="rtp-slider" min="70" max="98" value="85" step="1">
-                        <div class="rtp-marks">
-                            <span>70%</span>
-                            <span>80%</span>
-                            <span>90%</span>
-                            <span>98%</span>
+                    <div class="stats-mini">
+                        <span class="mini-label">Depósitos Hoje:</span>
+                        <span class="mini-value" id="today-deposits-count">0</span>
+                    </div>
+                    <button class="btn-export">
+                        <i class="fa-solid fa-file-excel"></i> Exportar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Estatísticas de Depósitos -->
+            <div class="deposits-stats-grid">
+                <div class="stat-card gradient-green">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Ticket Médio</span>
+                        <span class="stat-value" id="avg-deposit">R$ 0,00</span>
+                        <span class="stat-trend positive">+15% vs ontem</span>
+                    </div>
+                </div>
+                <div class="stat-card gradient-blue">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Depositantes Únicos</span>
+                        <span class="stat-value" id="unique-depositors">0</span>
+                        <span class="stat-trend">Últimas 24h</span>
+                    </div>
+                </div>
+                <div class="stat-card gradient-purple">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Maior Depósito</span>
+                        <span class="stat-value" id="max-deposit">R$ 0,00</span>
+                        <span class="stat-trend">Hoje</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Depósitos -->
+            <div class="table-container premium">
+                <table class="admin-table modern">
+                    <thead>
+                        <tr>
+                            <th><i class="fa-solid fa-hashtag"></i> ID Transação</th>
+                            <th><i class="fa-solid fa-calendar"></i> Data/Hora</th>
+                            <th><i class="fa-solid fa-user"></i> Jogador</th>
+                            <th><i class="fa-solid fa-money-bill-wave"></i> Valor</th>
+                            <th><i class="fa-solid fa-chart-simple"></i> Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deposits-table-body">
+                        <tr class="empty-state">
+                            <td colspan="5">
+                                <div class="empty-illustration">
+                                    <i class="fa-solid fa-wallet"></i>
+                                    <p>Nenhum depósito registrado</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+
+        <!-- RTP Control Section (REDESENHADA) -->
+        <section id="rtp" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-gauge-high"></i> Controle Avançado de RTP</h2>
+                <div class="header-actions">
+                    <div class="rtp-status-indicator">
+                        <span class="status-dot active"></span>
+                        <span>Sistema Ativo</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RTP Main Dashboard -->
+            <div class="rtp-dashboard">
+                <!-- Central Control -->
+                <div class="rtp-central-control">
+                    <div class="rtp-gauge-container">
+                        <div class="rtp-gauge">
+                            <svg viewBox="0 0 200 200" class="gauge-svg">
+                                <circle cx="100" cy="100" r="90" class="gauge-bg"></circle>
+                                <circle cx="100" cy="100" r="90" class="gauge-fill" id="gauge-progress"></circle>
+                            </svg>
+                            <div class="gauge-center">
+                                <div class="gauge-value" id="rtp-display">10%</div>
+                                <div class="gauge-label">RTP Atual</div>
+                            </div>
                         </div>
                     </div>
-                    <button class="btn-apply" id="apply-rtp">
-                        <i class="fa-solid fa-check"></i> Aplicar RTP
+
+                    <div class="rtp-slider-modern">
+                        <label class="slider-label">
+                            <i class="fa-solid fa-sliders"></i> Ajustar Dificuldade
+                        </label>
+                        <input type="range" id="rtp-slider" min="0" max="100" value="10" class="modern-range">
+                        <div class="slider-indicators">
+                            <span class="indicator extreme">EXTREMO</span>
+                            <span class="indicator hard">DIFÍCIL</span>
+                            <span class="indicator normal">NORMAL</span>
+                            <span class="indicator easy">FÁCIL</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-apply-rtp" id="apply-rtp">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>APLICAR CONFIGURAÇÃO</span>
                     </button>
                 </div>
 
-                <div class="rtp-zones">
-                    <h3>Zonas de Vitória</h3>
-                    <div class="zone-controls">
-                        <div class="zone-item">
-                            <label>Zona Perfeita (82-98)</label>
-                            <div class="zone-inputs">
-                                <input type="number" id="perfect-min" value="82" min="0" max="100">
-                                <span>até</span>
-                                <input type="number" id="perfect-max" value="98" min="0" max="100">
+                <!-- Live Statistics -->
+                <div class="rtp-live-stats">
+                    <h3><i class="fa-solid fa-chart-simple"></i> Estatísticas em Tempo Real</h3>
+                    <div class="live-stats-grid">
+                        <div class="live-stat-box">
+                            <div class="stat-icon pulse">
+                                <i class="fa-solid fa-percent"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">RTP Efetivo (24h)</span>
+                                <span class="stat-value" id="effective-rtp">0%</span>
+                            </div>
+                        </div>
+                        <div class="live-stat-box">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Total Apostado</span>
+                                <span class="stat-value" id="total-wagered">R$ 0,00</span>
+                            </div>
+                        </div>
+                        <div class="live-stat-box">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Total Pago</span>
+                                <span class="stat-value" id="total-paid">R$ 0,00</span>
+                            </div>
+                        </div>
+                        <div class="live-stat-box highlight">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Lucro da Casa</span>
+                                <span class="stat-value profit" id="house-profit">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Win Zones Configuration -->
+            <div class="zones-configuration">
+                <h3><i class="fa-solid fa-bullseye"></i> Configuração de Zonas de Vitória</h3>
+
+                <div class="zones-grid">
+                    <!-- Perfect Zone -->
+                    <div class="zone-config-card perfect">
+                        <div class="zone-header">
+                            <div class="zone-icon">
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <div class="zone-title">
+                                <h4>Zona Perfeita</h4>
+                                <p>Acertos precisos com multiplicador alto</p>
+                            </div>
+                        </div>
+                        <div class="zone-body">
+                            <div class="zone-range">
+                                <label>Faixa de Força (%)</label>
+                                <div class="range-inputs">
+                                    <input type="number" id="perfect-min" value="82" min="0" max="100"
+                                        class="zone-input">
+                                    <span class="separator">→</span>
+                                    <input type="number" id="perfect-max" value="98" min="0" max="100"
+                                        class="zone-input">
+                                </div>
                             </div>
                             <div class="zone-multiplier">
-                                <label>Multiplicador:</label>
-                                <input type="number" id="perfect-mult-min" value="1.5" step="0.1" min="1" max="5">
-                                <span>-</span>
-                                <input type="number" id="perfect-mult-max" value="3.0" step="0.1" min="1" max="5">
+                                <label>Multiplicador</label>
+                                <div class="range-inputs">
+                                    <input type="number" id="perfect-mult-min" value="1.5" step="0.1"
+                                        class="zone-input">
+                                    <span class="separator">→</span>
+                                    <input type="number" id="perfect-mult-max" value="3.0" step="0.1"
+                                        class="zone-input">
+                                </div>
+                            </div>
+                            <div class="zone-preview">
+                                <span class="preview-label">Chance de Win:</span>
+                                <span class="preview-value">100%</span>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="zone-item">
-                            <label>Zona Rim (75-82)</label>
-                            <div class="zone-inputs">
-                                <input type="number" id="rim-min" value="75" min="0" max="100">
-                                <span>até</span>
-                                <input type="number" id="rim-max" value="82" min="0" max="100">
+                    <!-- Rim Zone -->
+                    <div class="zone-config-card rim">
+                        <div class="zone-header">
+                            <div class="zone-icon">
+                                <i class="fa-solid fa-circle-dot"></i>
                             </div>
-                            <div class="zone-status">
-                                <span>Status: Perda (Rim Out)</span>
+                            <div class="zone-title">
+                                <h4>Zona de Aro</h4>
+                                <p>Acertos no aro com chance reduzida</p>
                             </div>
                         </div>
+                        <div class="zone-body">
+                            <div class="zone-range">
+                                <label>Faixa de Força (%)</label>
+                                <div class="range-inputs">
+                                    <input type="number" id="rim-min" value="75" min="0" max="100" class="zone-input">
+                                    <span class="separator">→</span>
+                                    <input type="number" id="rim-max" value="82" min="0" max="100" class="zone-input">
+                                </div>
+                            </div>
+                            <div class="zone-status-info">
+                                <i class="fa-solid fa-info-circle"></i>
+                                <span>Geralmente resulta em perda, com 10% de chance de vitória sortuda (1.1x)</span>
+                            </div>
+                        </div>
+                    </div>
 
-                        <button class="btn-apply" id="apply-zones">
-                            <i class="fa-solid fa-save"></i> Salvar Zonas
-                        </button>
+                    <!-- Miss Zone -->
+                    <div class="zone-config-card miss">
+                        <div class="zone-header">
+                            <div class="zone-icon">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div class="zone-title">
+                                <h4>Zona de Erro</h4>
+                                <p>Fora das zonas = Perda automática</p>
+                            </div>
+                        </div>
+                        <div class="zone-body">
+                            <div class="zone-status-info danger">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span>Qualquer força fora das zonas configuradas resulta em perda total</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="rtp-stats">
-                    <h3>Estatísticas de RTP</h3>
-                    <div class="rtp-stats-grid">
-                        <div class="stat-box">
-                            <span class="stat-label">RTP Efetivo (24h)</span>
-                            <span class="stat-value" id="effective-rtp">84.2%</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-label">Total Apostado</span>
-                            <span class="stat-value" id="total-wagered">R$ 0,00</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-label">Total Pago</span>
-                            <span class="stat-value" id="total-paid">R$ 0,00</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-label">Lucro da Casa</span>
-                            <span class="stat-value profit" id="house-profit">R$ 0,00</span>
-                        </div>
-                    </div>
+                <button class="btn-save-zones" id="apply-zones">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Salvar Configuração de Zonas
+                </button>
+            </div>
+
+            <!-- RTP History Chart -->
+            <div class="rtp-history-section">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> Histórico de RTP (Últimas 24h)</h3>
+                <div class="rtp-chart-container">
+                    <canvas id="rtpHistoryChart"></canvas>
                 </div>
             </div>
         </section>
@@ -335,45 +603,30 @@
             </div>
         </section>
 
-        <!-- Game Config Section -->
+        <!-- Config Section (Updated) -->
         <section id="game-config" class="admin-section">
             <div class="section-header">
-                <h2><i class="fa-solid fa-gear"></i> Configurações do Jogo</h2>
+                <h2><i class="fa-solid fa-gear"></i> Configurações do Sistema</h2>
             </div>
 
             <div class="config-grid">
                 <div class="config-card">
-                    <h3>Limites de Aposta</h3>
+                    <h3><i class="fa-solid fa-gamepad"></i> Jogo</h3>
                     <div class="config-form">
                         <div class="form-group">
-                            <label>Aposta Mínima (R$)</label>
-                            <input type="number" id="min-bet" value="5.00" step="0.01">
+                            <label>Velocidade da Barra (Normal)</label>
+                            <input type="number" id="gauge-speed-normal" step="0.1" value="0.9">
                         </div>
                         <div class="form-group">
-                            <label>Aposta Máxima (R$)</label>
-                            <input type="number" id="max-bet" value="1000.00" step="0.01">
+                            <label>Velocidade da Barra (Turbo)</label>
+                            <input type="number" id="gauge-speed-turbo" step="0.1" value="1.5">
                         </div>
-                        <button class="btn-save">Salvar</button>
+                        <button class="btn-save"><i class="fa-solid fa-save"></i> Salvar Alterações</button>
                     </div>
                 </div>
 
                 <div class="config-card">
-                    <h3>Velocidade do Medidor</h3>
-                    <div class="config-form">
-                        <div class="form-group">
-                            <label>Velocidade Normal</label>
-                            <input type="number" id="gauge-speed-normal" value="1.5" step="0.1" min="0.5" max="5">
-                        </div>
-                        <div class="form-group">
-                            <label>Velocidade Turbo</label>
-                            <input type="number" id="gauge-speed-turbo" value="2.5" step="0.1" min="0.5" max="5">
-                        </div>
-                        <button class="btn-save">Salvar</button>
-                    </div>
-                </div>
-
-                <div class="config-card">
-                    <h3>Modo Manutenção</h3>
+                    <h3><i class="fa-solid fa-server"></i> Sistema</h3>
                     <div class="config-form">
                         <div class="form-group">
                             <label class="switch-label">
@@ -387,60 +640,723 @@
                             <textarea id="maintenance-message"
                                 rows="3">Sistema em manutenção. Voltamos em breve!</textarea>
                         </div>
-                        <button class="btn-save">Salvar</button>
-                    </div>
-                </div>
-
-                <div class="config-card">
-                    <h3>Saldo Inicial</h3>
-                    <div class="config-form">
-                        <div class="form-group">
-                            <label>Saldo de Boas-Vindas (R$)</label>
-                            <input type="number" id="welcome-balance" value="1000.00" step="0.01">
-                        </div>
-                        <button class="btn-save">Salvar</button>
+                        <button class="btn-save"><i class="fa-solid fa-save"></i> Salvar Alterações</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Analytics Section -->
+        <!-- Analytics Section (REDESENHADA) -->
         <section id="analytics" class="admin-section">
             <div class="section-header">
-                <h2><i class="fa-solid fa-chart-pie"></i> Análises Avançadas</h2>
+                <h2><i class="fa-solid fa-chart-column"></i> Central de Análises</h2>
                 <div class="header-actions">
-                    <select class="filter-select">
-                        <option>Últimas 24h</option>
-                        <option>Última Semana</option>
-                        <option>Último Mês</option>
-                        <option>Personalizado</option>
+                    <select class="filter-select premium">
+                        <option value="24h">Últimas 24 horas</option>
+                        <option value="7d">Últimos 7 dias</option>
+                        <option value="30d">Últimos 30 dias</option>
+                        <option value="all">Todo período</option>
                     </select>
+                    <button class="btn-export">
+                        <i class="fa-solid fa-download"></i> Exportar Relatório
+                    </button>
                 </div>
             </div>
 
-            <div class="analytics-grid">
-                <div class="analytics-card">
-                    <h3>Distribuição de Apostas</h3>
-                    <canvas id="betsDistributionChart"></canvas>
+            <!-- Performance Overview -->
+            <div class="performance-grid">
+                <div class="perf-card primary">
+                    <div class="perf-header">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Performance Geral</span>
+                    </div>
+                    <div class="perf-value" id="perf-overall">98.5%</div>
+                    <div class="perf-trend positive">
+                        <i class="fa-solid fa-arrow-up"></i> +5.2% vs período anterior
+                    </div>
                 </div>
-                <div class="analytics-card">
-                    <h3>Taxa de Conversão</h3>
-                    <canvas id="conversionChart"></canvas>
+                <div class="perf-card success">
+                    <div class="perf-header">
+                        <i class="fa-solid fa-users-viewfinder"></i>
+                        <span>Taxa de Retenção</span>
+                    </div>
+                    <div class="perf-value" id="perf-retention">76.3%</div>
+                    <div class="perf-trend positive">
+                        <i class="fa-solid fa-arrow-up"></i> +2.1%
+                    </div>
                 </div>
-                <div class="analytics-card">
-                    <h3>Horários de Pico</h3>
-                    <canvas id="peakHoursChart"></canvas>
+                <div class="perf-card warning">
+                    <div class="perf-header">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Tempo Médio de Sessão</span>
+                    </div>
+                    <div class="perf-value" id="perf-session">18min</div>
+                    <div class="perf-trend neutral">
+                        <i class="fa-solid fa-minus"></i> Estável
+                    </div>
                 </div>
-                <div class="analytics-card">
-                    <h3>Retenção de Jogadores</h3>
-                    <canvas id="retentionChart"></canvas>
+                <div class="perf-card info">
+                    <div class="perf-header">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span>Taxa de Conversão</span>
+                    </div>
+                    <div class="perf-value" id="perf-conversion">42.8%</div>
+                    <div class="perf-trend positive">
+                        <i class="fa-solid fa-arrow-up"></i> +8.3%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Charts -->
+            <div class="analytics-main-grid">
+                <div class="chart-container-large">
+                    <div class="chart-header">
+                        <h3><i class="fa-solid fa-chart-area"></i> Receita & Apostas (Últimos 7 dias)</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="dot green"></span> Receita</span>
+                            <span class="legend-item"><span class="dot blue"></span> Apostas</span>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="revenueOverTimeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container-medium">
+                    <div class="chart-header">
+                        <h3><i class="fa-solid fa-pie-chart"></i> Distribuição Win/Loss</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="winLossChart"></canvas>
+                    </div>
+                    <div class="chart-stats">
+                        <div class="stat-inline">
+                            <span class="label">Vitórias:</span>
+                            <span class="value green" id="total-wins">0</span>
+                        </div>
+                        <div class="stat-inline">
+                            <span class="label">Derrotas:</span>
+                            <span class="value red" id="total-losses">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary Charts -->
+            <div class="analytics-secondary-grid">
+                <div class="chart-container-small">
+                    <div class="chart-header">
+                        <h3><i class="fa-solid fa-funnel"></i> Funil de Conversão</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="funnelChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container-small">
+                    <div class="chart-header">
+                        <h3><i class="fa-solid fa-clock-rotate-left"></i> Horários de Pico</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="peakHoursChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container-small">
+                    <div class="chart-header">
+                        <h3><i class="fa-solid fa-mobile-screen"></i> Dispositivos</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="devicesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Players -->
+            <div class="top-players-section">
+                <h3><i class="fa-solid fa-trophy"></i> Top 10 Jogadores (Maior Volume)</h3>
+                <div class="top-players-grid" id="top-players-list">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Leads Section (NOVA) -->
+        <section id="leads" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-user-plus"></i> Gerenciamento de Leads</h2>
+                <div class="header-actions">
+                    <div class="stats-mini">
+                        <span class="mini-label">Total de Leads:</span>
+                        <span class="mini-value" id="total-leads-count">0</span>
+                    </div>
+                    <div class="stats-mini success">
+                        <span class="mini-label">Taxa de Conversão:</span>
+                        <span class="mini-value" id="leads-conversion-rate">0%</span>
+                    </div>
+                    <button class="btn-export" id="export-leads-csv">
+                        <i class="fa-solid fa-download"></i> Exportar CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Leads Filters -->
+            <div class="filters-bar">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fa-solid fa-list"></i> Todos
+                </button>
+                <button class="filter-btn" data-filter="converted">
+                    <i class="fa-solid fa-check-circle"></i> Convertidos
+                </button>
+                <button class="filter-btn" data-filter="pending">
+                    <i class="fa-solid fa-clock"></i> Pendentes
+                </button>
+            </div>
+
+            <!-- Leads Stats Cards -->
+            <div class="leads-stats-grid">
+                <div class="stat-card gradient-blue">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Novos Leads (Hoje)</span>
+                        <span class="stat-value" id="leads-today">0</span>
+                        <span class="stat-trend positive">+12 vs ontem</span>
+                    </div>
+                </div>
+                <div class="stat-card gradient-green">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Convertidos</span>
+                        <span class="stat-value" id="leads-converted">0</span>
+                        <span class="stat-trend">Depositaram</span>
+                    </div>
+                </div>
+                <div class="stat-card gradient-purple">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Pendentes</span>
+                        <span class="stat-value" id="leads-pending">0</span>
+                        <span class="stat-trend">Sem depósito</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leads Table -->
+            <div class="table-container premium">
+                <table class="admin-table modern">
+                    <thead>
+                        <tr>
+                            <th><i class="fa-solid fa-calendar"></i> Data Cadastro</th>
+                            <th><i class="fa-solid fa-user"></i> Nome</th>
+                            <th><i class="fa-solid fa-phone"></i> Telefone</th>
+                            <th><i class="fa-solid fa-envelope"></i> Email</th>
+                            <th><i class="fa-solid fa-signal"></i> Status</th>
+                            <th><i class="fa-solid fa-money-bill"></i> Primeiro Depósito</th>
+                            <th><i class="fa-solid fa-gears"></i> Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leads-table-body">
+                        <tr class="empty-state">
+                            <td colspan="7">
+                                <div class="empty-illustration">
+                                    <i class="fa-solid fa-address-book"></i>
+                                    <p>Nenhum lead cadastrado</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Gateway Section (NOVA) -->
+        <section id="gateway" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-credit-card"></i> Gateway de Pagamento</h2>
+                <div class="header-actions">
+                    <div class="gateway-status">
+                        <span class="status-dot active"></span>
+                        <span>Gateway Ativo</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gateway Configuration -->
+            <div class="gateway-config-grid">
+                <!-- PIX Configuration -->
+                <div class="gateway-card">
+                    <div class="gateway-header">
+                        <div class="gateway-icon pix">
+                            <i class="fa-brands fa-pix"></i>
+                        </div>
+                        <div class="gateway-title">
+                            <h3>PIX</h3>
+                            <p>Pagamentos instantâneos via PIX</p>
+                        </div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" id="pix-enabled" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="gateway-body">
+                        <div class="form-group">
+                            <label>Chave PIX (CNPJ/Email)</label>
+                            <input type="text" id="pix-key" class="gateway-input" placeholder="exemplo@empresa.com.br">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome do Beneficiário</label>
+                            <input type="text" id="pix-name" class="gateway-input" placeholder="Empresa LTDA">
+                        </div>
+                        <div class="form-group">
+                            <label>API Token (Opcional)</label>
+                            <input type="password" id="pix-token" class="gateway-input" placeholder="••••••••••••">
+                        </div>
+                        <div class="gateway-stats">
+                            <div class="stat-mini">
+                                <span>Transações (24h):</span>
+                                <strong id="pix-transactions">0</strong>
+                            </div>
+                            <div class="stat-mini">
+                                <span>Volume:</span>
+                                <strong id="pix-volume">R$ 0,00</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Credit Card Configuration -->
+                <div class="gateway-card">
+                    <div class="gateway-header">
+                        <div class="gateway-icon card">
+                            <i class="fa-solid fa-credit-card"></i>
+                        </div>
+                        <div class="gateway-title">
+                            <h3>Cartão de Crédito</h3>
+                            <p>Visa, Mastercard, Elo</p>
+                        </div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" id="card-enabled">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="gateway-body">
+                        <div class="form-group">
+                            <label>Provider</label>
+                            <select id="card-provider" class="gateway-input">
+                                <option value="">Selecione...</option>
+                                <option value="stripe">Stripe</option>
+                                <option value="mercadopago">Mercado Pago</option>
+                                <option value="pagseguro">PagSeguro</option>
+                                <option value="cielo">Cielo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Public Key</label>
+                            <input type="text" id="card-public-key" class="gateway-input" placeholder="pk_live_...">
+                        </div>
+                        <div class="form-group">
+                            <label>Secret Key</label>
+                            <input type="password" id="card-secret-key" class="gateway-input" placeholder="sk_live_...">
+                        </div>
+                        <div class="gateway-stats">
+                            <div class="stat-mini">
+                                <span>Transações (24h):</span>
+                                <strong id="card-transactions">0</strong>
+                            </div>
+                            <div class="stat-mini">
+                                <span>Volume:</span>
+                                <strong id="card-volume">R$ 0,00</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crypto Configuration -->
+                <div class="gateway-card">
+                    <div class="gateway-header">
+                        <div class="gateway-icon crypto">
+                            <i class="fa-brands fa-bitcoin"></i>
+                        </div>
+                        <div class="gateway-title">
+                            <h3>Criptomoedas</h3>
+                            <p>BTC, ETH, USDT</p>
+                        </div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" id="crypto-enabled">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="gateway-body">
+                        <div class="form-group">
+                            <label>Wallet Address (BTC)</label>
+                            <input type="text" id="crypto-btc" class="gateway-input" placeholder="bc1q...">
+                        </div>
+                        <div class="form-group">
+                            <label>Wallet Address (ETH)</label>
+                            <input type="text" id="crypto-eth" class="gateway-input" placeholder="0x...">
+                        </div>
+                        <div class="form-group">
+                            <label>API Provider</label>
+                            <select id="crypto-provider" class="gateway-input">
+                                <option value="">Selecione...</option>
+                                <option value="coinbase">Coinbase Commerce</option>
+                                <option value="binance">Binance Pay</option>
+                                <option value="nowpayments">NOWPayments</option>
+                            </select>
+                        </div>
+                        <div class="gateway-stats">
+                            <div class="stat-mini">
+                                <span>Transações (24h):</span>
+                                <strong id="crypto-transactions">0</strong>
+                            </div>
+                            <div class="stat-mini">
+                                <span>Volume:</span>
+                                <strong id="crypto-volume">R$ 0,00</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="gateway-actions">
+                <button class="btn-save-gateway" id="save-gateway-config">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Salvar Configurações de Gateway
+                </button>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="gateway-transactions">
+                <h3><i class="fa-solid fa-list"></i> Transações Recentes</h3>
+                <div class="transactions-list" id="gateway-transactions-list">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Webhooks Section (NOVA) -->
+        <section id="webhooks" class="admin-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-webhook"></i> Webhooks & Integrações</h2>
+                <div class="header-actions">
+                    <button class="btn-add-webhook">
+                        <i class="fa-solid fa-plus"></i> Novo Webhook
+                    </button>
+                </div>
+            </div>
+
+            <!-- Webhooks Info -->
+            <div class="webhooks-info-card">
+                <div class="info-icon">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <div class="info-content">
+                    <h4>Como funcionam os Webhooks?</h4>
+                    <p>Webhooks permitem que você receba notificações em tempo real sobre eventos importantes, como
+                        novos depósitos, saques aprovados, novos cadastros, etc. Configure URLs de callback para
+                        integrar com sistemas externos.</p>
+                </div>
+            </div>
+
+            <!-- Webhooks List -->
+            <div class="webhooks-grid">
+                <!-- Webhook Card 1 -->
+                <div class="webhook-card">
+                    <div class="webhook-header">
+                        <div class="webhook-status active">
+                            <span class="status-dot active"></span>
+                            <span>Ativo</span>
+                        </div>
+                        <button class="btn-icon-delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="webhook-body">
+                        <h4>Notificação de Depósitos</h4>
+                        <div class="webhook-url">
+                            <i class="fa-solid fa-link"></i>
+                            <code>https://api.exemplo.com/webhooks/deposits</code>
+                        </div>
+                        <div class="webhook-events">
+                            <span class="event-badge">deposit.created</span>
+                            <span class="event-badge">deposit.confirmed</span>
+                        </div>
+                        <div class="webhook-stats">
+                            <div class="stat-mini">
+                                <span>Último envio:</span>
+                                <strong>Há 2 horas</strong>
+                            </div>
+                            <div class="stat-mini">
+                                <span>Taxa de sucesso:</span>
+                                <strong class="success">98.5%</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="webhook-footer">
+                        <button class="btn-test-webhook">
+                            <i class="fa-solid fa-flask"></i> Testar
+                        </button>
+                        <button class="btn-edit-webhook">
+                            <i class="fa-solid fa-pen"></i> Editar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Webhook Card 2 -->
+                <div class="webhook-card">
+                    <div class="webhook-header">
+                        <div class="webhook-status inactive">
+                            <span class="status-dot"></span>
+                            <span>Inativo</span>
+                        </div>
+                        <button class="btn-icon-delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="webhook-body">
+                        <h4>Notificação de Saques</h4>
+                        <div class="webhook-url">
+                            <i class="fa-solid fa-link"></i>
+                            <code>https://api.exemplo.com/webhooks/withdrawals</code>
+                        </div>
+                        <div class="webhook-events">
+                            <span class="event-badge">withdrawal.requested</span>
+                            <span class="event-badge">withdrawal.approved</span>
+                            <span class="event-badge">withdrawal.rejected</span>
+                        </div>
+                        <div class="webhook-stats">
+                            <div class="stat-mini">
+                                <span>Último envio:</span>
+                                <strong>Nunca</strong>
+                            </div>
+                            <div class="stat-mini">
+                                <span>Taxa de sucesso:</span>
+                                <strong>-</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="webhook-footer">
+                        <button class="btn-test-webhook">
+                            <i class="fa-solid fa-flask"></i> Testar
+                        </button>
+                        <button class="btn-edit-webhook">
+                            <i class="fa-solid fa-pen"></i> Editar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Webhook Card 3 -->
+                <div class="webhook-card">
+                    <div class="webhook-header">
+                        <div class="webhook-status active">
+                            <span class="status-dot active"></span>
+                            <span>Ativo</span>
+                        </div>
+                        <button class="btn-icon-delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="webhook-body">
+                        <h4>Novos Cadastros</h4>
+                        <div class="webhook-url">
+                            <i class="fa-solid fa-link"></i>
+                            <code>https://crm.exemplo.com/api/leads</code>
+                        </div>
+                        <div class="webhook-events">
+                            <span class="event-badge">user.registered</span>
+                        </div>
+                        <div class="webhook-stats">
+                            <div class="stat-mini">
+                                <span>Último envio:</span>
+                                <strong>Há 15 min</strong>
+                            </div>
+                            <div class="stat-mini">
+                                <span>Taxa de sucesso:</span>
+                                <strong class="success">100%</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="webhook-footer">
+                        <button class="btn-test-webhook">
+                            <i class="fa-solid fa-flask"></i> Testar
+                        </button>
+                        <button class="btn-edit-webhook">
+                            <i class="fa-solid fa-pen"></i> Editar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Webhook Logs -->
+            <div class="webhook-logs-section">
+                <h3><i class="fa-solid fa-terminal"></i> Logs de Webhooks (Últimas 24h)</h3>
+                <div class="logs-container">
+                    <div class="log-entry success">
+                        <div class="log-time">18:45:32</div>
+                        <div class="log-event">deposit.confirmed</div>
+                        <div class="log-url">https://api.exemplo.com/webhooks/deposits</div>
+                        <div class="log-status">200 OK</div>
+                        <div class="log-response">0.234s</div>
+                    </div>
+                    <div class="log-entry success">
+                        <div class="log-time">18:30:15</div>
+                        <div class="log-event">user.registered</div>
+                        <div class="log-url">https://crm.exemplo.com/api/leads</div>
+                        <div class="log-status">200 OK</div>
+                        <div class="log-response">0.156s</div>
+                    </div>
+                    <div class="log-entry error">
+                        <div class="log-time">17:22:08</div>
+                        <div class="log-event">withdrawal.approved</div>
+                        <div class="log-url">https://api.exemplo.com/webhooks/withdrawals</div>
+                        <div class="log-status">500 Error</div>
+                        <div class="log-response">Timeout</div>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
+    <!-- Player Details Modal -->
+    <div id="player-modal" class="admin-modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content-admin">
+            <div class="modal-header">
+                <h2 id="modal-player-name">Detalhes do Jogador</h2>
+                <button class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body-admin">
+                <div class="player-summary">
+                    <div class="summary-item">
+                        <span class="label">Saldo</span>
+                        <span class="value" id="modal-player-balance">R$ 0,00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Total Apostado</span>
+                        <span class="value" id="modal-player-wagered">R$ 0,00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Lucro/Prejuízo</span>
+                        <span class="value" id="modal-player-profit">R$ 0,00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Win Rate</span>
+                        <span class="value" id="modal-player-winrate">0%</span>
+                    </div>
+                </div>
+
+                <h3>Histórico de Partidas</h3>
+                <div class="player-history-table-container">
+                    <table class="admin-table sm">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Aposta</th>
+                                <th>Resultado</th>
+                                <th>Lucro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-player-history-body">
+                            <!-- Dynamic -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary btn-close-modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lead Details Modal (NOVO) -->
+    <div id="lead-modal" class="admin-modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content-admin">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-user-circle"></i> Detalhes do Lead</h2>
+                <button class="btn-close-lead-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body-admin">
+                <!-- Lead Info -->
+                <div class="lead-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Nome Completo</span>
+                        <span class="info-value" id="lead-name">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Data de Cadastro</span>
+                        <span class="info-value" id="lead-date">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Telefone</span>
+                        <span class="info-value" id="lead-phone">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" id="lead-email">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="info-value" id="lead-status">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Primeiro Depósito</span>
+                        <span class="info-value" id="lead-first-deposit">-</span>
+                    </div>
+                </div>
+
+                <!-- Player Stats (if converted) -->
+                <div id="lead-player-stats" class="lead-player-stats hidden">
+                    <h3><i class="fa-solid fa-chart-simple"></i> Estatísticas como Jogador</h3>
+                    <div class="player-summary">
+                        <div class="summary-item">
+                            <span class="label">Saldo Atual</span>
+                            <span class="value" id="lead-player-balance">R$ 0,00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Total Apostado</span>
+                            <span class="value" id="lead-player-wagered">R$ 0,00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Total Ganho</span>
+                            <span class="value" id="lead-player-won">R$ 0,00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Win Rate</span>
+                            <span class="value" id="lead-player-winrate">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="lead-actions">
+                    <button class="btn-action" style="background:#00d26a;" id="btn-contact-lead">
+                        <i class="fa-solid fa-phone"></i> Entrar em Contato
+                    </button>
+                    <button class="btn-action" style="background:#4a90e2;" id="btn-send-email-lead">
+                        <i class="fa-solid fa-envelope"></i> Enviar Email
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary btn-close-lead-modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="database.js"></script>
     <script src="admin-script.js"></script>
+    <script src="admin-premium.js"></script>
 </body>
 
 </html>

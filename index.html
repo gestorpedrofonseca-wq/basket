@@ -32,7 +32,7 @@
             </div>
             <button class="btn-deposit" data-modal="modal-deposit">DEPÓSITO</button>
             <div class="profile-icon" data-modal="modal-profile">
-                <i class="fa-solid fa-user"></i>
+                <img src="https://via.placeholder.com/40" id="header-avatar-img" alt="Avatar">
             </div>
         </div>
     </header>
@@ -53,9 +53,11 @@
                     <div class="backboard-inner">
                         <img src="assets/xrcore_logo_final.png" class="backboard-logo" alt="XR CORE">
                     </div>
-                    <div class="rim">
-                        <div class="net" id="hoop-net"></div>
-                    </div>
+                </div>
+                <div class="hoop-rim-system">
+                    <div class="rim-back"></div>
+                    <div class="net" id="hoop-net"></div>
+                    <div class="rim-front"></div>
                 </div>
             </div>
 
@@ -237,7 +239,7 @@
                     </div>
                 </div>
                 <button class="btn-action outline full" id="edit-data-trigger">Editar Dados</button>
-                <button class="btn-action outline full danger">Sair</button>
+                <button class="btn-action outline full danger" id="btn-logout-profile">Sair</button>
             </div>
         </div>
 
@@ -252,7 +254,7 @@
                 <button class="menu-item"><i class="fa-solid fa-percent"></i> Promoções</button>
                 <button class="menu-item"><i class="fa-solid fa-shield-halved"></i> Jogo Responsável</button>
                 <button class="menu-item"><i class="fa-solid fa-clipboard-list"></i> Termos e Condições</button>
-                <button class="menu-item logout-trigger"
+                <button class="menu-item logout-trigger" id="btn-logout-menu"
                     style="color: #ff4444; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; padding-top: 15px;">
                     <i class="fa-solid fa-right-from-bracket"></i> Sair do Jogo
                 </button>
@@ -263,6 +265,7 @@
 
     </div>
 
+    <script src="database.js"></script>
     <script src="script.js"></script>
 </body>
 

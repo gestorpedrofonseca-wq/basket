@@ -232,6 +232,9 @@
         </div>
     </div>
 
+    </div>
+
+    <script src="database.js"></script>
     <script>
         // PROCEDURAL AUDIO MANAGER
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -358,25 +361,21 @@
             const password = document.getElementById('contact').value; // Use contact as password for admin check
 
             // Check for admin credentials
-            // Admin: admin / admin567 OR (00) 00000-0000 (detected as contact/password)
             if (username === 'admin' && (password === 'admin567' || password === '(00) 00000-0000' || password === '00000000000' || password === '(00)00000-0000')) {
                 localStorage.setItem('basketbet_admin', 'true');
-
                 Sounds.playMoney();
                 Sounds.stopMusic();
-
                 const btn = e.target.querySelector('button');
                 btn.innerHTML = 'ACESSO ADMIN...';
                 btn.disabled = true;
-
                 setTimeout(() => {
                     window.location.href = 'admin.html';
                 }, 1200);
                 return;
             }
 
-            // Normal user login
-            localStorage.setItem('basketbet_user', username);
+            // Normal user login via DB
+            DB.loginUser(username, password); // password here is the phone number
 
             Sounds.playMoney();
             Sounds.stopMusic();
